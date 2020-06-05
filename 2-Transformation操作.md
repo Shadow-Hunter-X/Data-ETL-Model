@@ -2,8 +2,8 @@
 title : Transformation操作
 ---
 
-本篇将进行详细的说明Transformation的操作，涉及各方面。在本例中将构造一个时间计算的例子进行说明，
-模拟一家公司的员工的上班的打卡记录，并通过和上班时间对比进行绩效的判定。
+本篇将进行详细的说明Transformation的操作，涉及各方面。但不要纠结使用各种Step，这里只是作为解释数据流、预览、调试方法、熟悉各操作界面。
+在本例中将构造一个时间计算的例子进行说明，模拟一家公司的员工的上班的打卡记录，并通过和上班时间对比进行绩效的判定。
 
 ## 构造时间计算的Transformation
 
@@ -33,12 +33,21 @@ title : Transformation操作
 
 ![使用Number Ranger进行评级](res/2-transformation-number.gif)
 
+* 最后用User Defined Java Expression整合信息
+  
+  对于User Defined Java Expression是使用**Janino**作为编译器，实现**动态**的编译Java代码。
+  使用Java代码功能添加两列：一列使用3目运算符，输出打卡情况；另一列简单的字符串拼接
 
-## 构造脏数据用于调试和错误说明
+![User Defined Java Expression](res/2-transformation-udj.gif)
 
+构造的例子后，在这个例子的基础上开始说明各部分的内容。
 
 ## 流的概念
 
-1 注意在input和output列
+Input列和Output列,构成输入流和输出流。
 
-2 其他的就看PDF中的内容吧
+
+## 调试方法 
+
+
+## Step的配置界面
