@@ -45,10 +45,53 @@ title : Transformation操作
 
 ## 流的概念
 
-Input列和Output列,构成输入流和输出流。
+Input列和Output列,构成输入流和输出流。通过Input和Output是两个Step间的直接联系,可以将Input和Output看具体数据流的具体细节。
+查看每个Step的Input和Output的方法，右键单击Step，在出现的界面中选择 Input Fields或Output Fields,然后就能看到对应这个Step的输入列和输出列。
 
+![Input&Output](res/2-transformation-input.gif)
+
+可以发现通过Input和Output可以对数据进行溯源和过滤列。
 
 ## 调试方法 
 
+* 在第一步Data Grid中在日期数据中输入字符串，看执行过程中是否发生错误。
+![data grid error1](res/2-transformation-error1.gif)
+
+具体的错误的信息,由于类型不匹配，无法将字符串转换为时间类型。将对应的类型修正后即可。
+~~~
+2020/06/10 16:51:18 - Data Grid.0 - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : Unexpected error
+2020/06/10 16:51:18 - Data Grid.0 - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : org.pentaho.di.core.exception.KettleValueException: 
+2020/06/10 16:51:18 - Data Grid.0 - work_in String : couldn't convert string [qazwsx] to a date using format [yyyy-MM-dd HH:mm:ss] on offset location 0
+2020/06/10 16:51:18 - Data Grid.0 - qazwsx
+....
+~~~
+
+* 对Calculator中输入为在data grid中出现的列名，看执行过程是否发生何种错误。
+![data gird error2](res/2-transformation-error2.gif)
+
+具体的错误信息如下，由于在找到对应的列
+~~~
+2020/06/10 17:06:58 - Calculator.0 - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : Unexpected error
+2020/06/10 17:06:58 - Calculator.0 - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : org.pentaho.di.core.exception.KettleStepException: 
+2020/06/10 17:06:58 - Calculator.0 - Unable to find the second argument field 'clock_diff for calculation #1
+2020/06/10 17:06:58 - Calculator.0 - 
+......
+~~~
+
+* 对User Defined Java Expression中的列不指定类型,看执行过程是否会发生错误。
+![error3](res/2-transformation-error3.gif)
+
+具体的错误信息如下，未指定相关的类型
+~~~
+2020/06/10 17:15:37 - Row Preview - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : org.pentaho.di.core.exception.KettleValueException: 
+2020/06/10 17:15:37 - Row Preview - 打卡情况 None : Unknown type 0 specified.
+.......
+~~~
+
+通过上面的构造的3个错误，可以在Execution Results窗口中进行查看执行结果和相关信息。Execution Results窗口被分为6个标签，分别对应的功能如下。
+
 
 ## Step的配置界面
+
+命令栏,和Setp的配置界面
+左侧的控件窗口的认识，认识更深层的Step
