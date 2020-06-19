@@ -126,6 +126,8 @@ Input列和Output列,构成输入流和输出流。通过Input和Output是两个
 
 ![run-tool](res/run-tool.png)
 
+其中将预览也可以视为是调试的一种方式。
+
 * Design中的结构
 
 在Design窗口中，可以发现不同的功能的Step分组存放在不同的目录下。逐渐熟悉，灵活运用。
