@@ -61,9 +61,10 @@ print ( template.render( data=list(u'赤橙黄绿青蓝紫'),types = u'颜色' )
 	
 
 * 控制语句
-	Jinja2的控制语句主要就是条件控制语句if和循环控制语句for，语法类似于Python。
-	
-	对于if条件判断的格式如下：第一个和最后一个是必须要有的，中间两行视情况进行使用
+
+Jinja2的控制语句主要就是条件控制语句if和循环控制语句for，语法类似于Python。
+
+对于if条件判断的格式如下：第一个和最后一个是必须要有的，中间两行视情况进行使用
 
 ~~~html
 	{% if ... %}    
@@ -75,10 +76,63 @@ print ( template.render( data=list(u'赤橙黄绿青蓝紫'),types = u'颜色' )
 	{% endif %}
 ~~~
 
-	而for语句，在上述的示例代码中已经使用。
+而for语句，在上述的示例代码中已经使用。
 
 ~~~html
 	{% for i in data %}
 		.....
 	{% endfor %}
 ~~~
+
+在一个 for 循环块中你可以访问这些特殊的变量:
+
+|变量|内容|
+|----|----|
+|loop.index|当前循环迭代的次数（从 1 开始）|
+|loop.index0|当前循环迭代的次数（从 0 开始）|
+|loop.revindex|到循环结束需要迭代的次数（从 1 开始）|
+|loop.revindex0|到循环结束需要迭代的次数（从 0 开始）|
+|loop.first|如果是第一次迭代，为True|
+|loop.last|如果是最后一次迭代，为True|
+|loop.length|序列中的项目数|
+|loop.cycle|在一串序列间期取值的辅助函数|
+
+对上述的例子进行修改，演示使用这些特殊变量的使用。
+
+~~~python
+
+from jinja2 import Template      
+
+str = """                        
+
+<p>Jinja 测试 {{ types }}</p>
+
+<ul> 查看迭代次数：从1开始计数
+    {% for i in data %}
+        <li>{{ i }}   {{ loop.index }}   {{loop.length}}   {{loop.first}} </li>
+    {% endfor %}
+</ul>
+
+<ul> 查看还需迭代次数：从1开始计数
+    {% for i in data %}
+        <li>{{ i }}   {{ loop.revindex }}   {{loop.length}}   {{loop.last}} </li>
+    {% endfor %}
+</ul>
+
+<ul> 循环迭代特定值
+    {% for i in data %}
+        <li> {{ loop.cycle('黑','白') }}</li>
+    {% endfor %}
+</ul>
+
+"""            
+template = Template(str)   
+print ( template.render( data=list(u'赤橙黄绿青蓝紫'),types = u'颜色' ) )  
+
+~~~
+
+执行的结果如下：
+
+![执行结果](pic/second.gif)
+
+在下一节，将对Jinja2的更多的语法结构进行说明。
