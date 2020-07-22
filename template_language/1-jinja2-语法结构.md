@@ -98,7 +98,7 @@ template.render(name='world',num=10)
 
 ### 行语句&空白控制
 
-如果应用启用了行语句，就可以把一个行标记为一个语句。如果行语句前缀配置为# ，下面的两个例子是等价的:
+**如果应用启用了行语句**，就可以把一个行标记为一个语句。如果行语句前缀配置为# ，下面的两个例子是等价的:
 
 ~~~html
 
@@ -107,9 +107,7 @@ template.render(name='world',num=10)
     <li>{{ item }}</li>
 # endfor
 </ul>
-
-==
-
+=
 <ul>
 {% for item in seq %}
     <li>{{ item }}</li>
@@ -118,8 +116,7 @@ template.render(name='world',num=10)
 
 ~~~
 
-默认配置中，模板引擎不会对空白做进一步修改，所以每个空白（空格、制表符、换行符等）都会原封不动返回。
-如果应用配置了Jinja的trim_blocks ，模板标签后的第一个换行符会被自动移除。
+默认配置中，模板引擎不会对空白做进一步修改，所以每个空白（空格、制表符、换行符等）都会原封不动返回。如果应用配置了Jinja的trim_blocks ，模板标签后的第一个换行符会被自动移除。
 也可以手动剥离模板中的空白,当在块（比如一个for标签、一段注释或变量表达式）的开始或结束放置一个减号(-)，就可移除块前或块后的空白。
 
 ~~~html
@@ -128,6 +125,25 @@ template.render(name='world',num=10)
     {{ item }}
 {%- endfor %}
 
+~~~
+
+### 赋值和with语句
+
+赋值：在代码块中，可以为变量赋值。
+	
+~~~html
+{% set navigation = [('index.html', 'Index'), ('about.html', 'About')] %}
+{% set key, value = call_something() %}
+~~~
+
+类似于Python中的with关键字，它可以限制with语句块内对象的作用域。
+
+~~~html
+{% with foo = 1 %}
+    {% set bar = 2 %}
+    {{ foo + bar }}
+{% endwith %}
+{# foo and bar are not visible here #}
 ~~~
 
 ### 模板继承
@@ -187,7 +203,66 @@ Jinja中最强大的部分就是模板继承。模板继承允许你构建一个
 {% endblock %}
 
 ~~~
+
 {% extend %} 标签是这里的关键,它告诉模板引擎这个模板"继承"另一个模板。当模板系统对这个模板求值时，首先定位父模板。
+如果父模板中的块里有内容不想被子模板替换,使用super()方法。
+
+**块语句的作用域**
+默认情况下，块内语句是无法访问块外作用域中的变量。如在”layout.html”加上一个循环，在子模板中定义”list”块并访问循环中的”item”变量。
+
+~~~html
+
+{# 在基本模板中定义的循环 #}
+{% for item in range(10) %}
+    <li>{% block list %}{% endblock %}</li>
+{% endfor %}
+
+{# 在子模板中访问基本模板中循环的item变量,但是执行的结果为空 #}
+{% block list %}
+    <em>{{ item }}</em>
+{% endblock %}
+
+{# 在块声明时添加scoped关键字,如下所示 #}
+{% for item in range(10) %}
+    <li>{% block list scoped %}{% endblock %}</li>
+{% endfor %}
+
+~~~
+
+模板继承的演示如下所示：
+
+~~~python
+
+from jinja2 import Template ,Environment  
+
+
+sub_html="""
+{% extends 'D:/base.html' %}
+{% block title %}Index{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h1>Index</h1>
+    <p class="important">
+      Welcome on my awesome homepage.
+    </p>
+{% endblock %}
+
+"""
+env = Environment()
+
+template = env.get_template('D:/base.html')
+
+template.render(sub_html)
+
+~~~
+
 
 ### html转义
 
@@ -199,12 +274,14 @@ Jinja两者都支持，使用哪个取决于应用的配置,默认的配置未�
 * 关于变量安全性的信息是易碎的。可能会发生强制标记一个值为安全或非安全的情况，而返回值会被作为 HTML 转义两次
 
 1 使用手动转义
+
 如果启用了手动转义，按需转义变量就是你的责任。要转义什么？如果有一个可能包含 > 、 < 、 & 或 " 字符的变量，必须转义它，除非变量中的HTML有可信的良好格式。
 转义通过用管道传递到过滤器|e来实现:{{ user.username|e }}。
 
 2  使用自动转义
+
 当启用了自动转移默认会转移一切，除非值被显式地标记为安全的。可以在应用中标记，也可以在模板中使用 |safe 过滤器标记。
 这种方法的主要问题是Python本身没有被污染的值的概念，所以一个值是否安全的信息会丢失。如果这个信息丢失，会继续转义，你最后会得到一个转义了两次的内容
 
-
+### 宏
 
