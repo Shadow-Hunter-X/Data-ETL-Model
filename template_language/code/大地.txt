@@ -1,0 +1,7 @@
+{% block template %}大地.txt{% endblock template %}
+大地：一切开始的地方......
+{#- "开始" Base中的内容 #}
+{% block begin %}
+    大地承载着万物
+{%- endblock begin %}
+无望无际

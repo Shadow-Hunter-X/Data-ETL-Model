@@ -229,15 +229,14 @@ Jinja中最强大的部分就是模板继承。模板继承允许你构建一个
 
 ~~~
 
-模板继承的演示如下所示：
-
 ~~~python
 
-from jinja2 import Template ,Environment  
+from jinja2 import Template ,Environment,FileSystemLoader
 
 
 sub_html="""
-{% extends 'D:/base.html' %}
+
+{% extends "base.html" %}
 {% block title %}Index{% endblock %}
 
 {% block head %}
@@ -255,21 +254,21 @@ sub_html="""
 {% endblock %}
 
 """
-env = Environment()
 
-template = env.get_template('D:/base.html')
+env = Environment( loader=FileSystemLoader(searchpath='D:/') )
 
-template.render(sub_html)
+template = env.get_template(sub_html)
+
+print ( template.render() )
 
 ~~~
-
 
 ### html转义
 
 当从模板生成HTML时，始终有这样的风险:变量包含影响已生成HTML的字符。有两种解决方法:手动转义每个字符或默认自动转义所有的东西。
 Jinja两者都支持，使用哪个取决于应用的配置,默认的配置未开启自动转义有这样的原因:
 
-* 转义所有非安全值的东西也意味着Jijna转义已知不包含HTML的值，对性能有巨大影响。
+* 转义所有非安全值的东西也意味着Jinja转义已知不包含HTML的值，对性能有巨大影响。
 
 * 关于变量安全性的信息是易碎的。可能会发生强制标记一个值为安全或非安全的情况，而返回值会被作为 HTML 转义两次
 
@@ -285,3 +284,24 @@ Jinja两者都支持，使用哪个取决于应用的配置,默认的配置未�
 
 ### 宏
 
+~~~python
+
+from jinja2 import Template  
+
+str="""
+{% macro input(name, type='text', value='') -%}
+    <input type="{{ type }}" name="{{ name }}" value="{{ value|e }}">
+{%- endmacro %}
+
+<p>{{ input('username', value='user') }}</p>
+<p>{{ input('password', 'password') }}</p>
+<p>{{ input('submit', 'submit', 'Submit') }}</p>
+"""
+
+template = Template(str) 
+
+print ( template.render() )  
+
+
+
+~~~
