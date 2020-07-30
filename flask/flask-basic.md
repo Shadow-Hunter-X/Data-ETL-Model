@@ -115,6 +115,9 @@ flask框架session存储有两种方式:
 第二种方式：存储在服务端，如：redis,memcached,mysql，file,mongodb等等，存在flask-session第三方库
 
 操作步骤：
+SECRET_KEY 配置变量是通用密钥, 可在 Flask 和多个第三方扩展中使用。如其名所示, 加密的强度取决于变量值的机密度。 
+不同的程序要使用不同的密钥, 而且要保证其他人不知道你所用的字符串。其主要作用应该是在各种加密过程中加盐以增加安全性。
+在实际应用中最好将这个参数存储为系统环境变量
 
 ~~~python
 from flask import Flask,session
