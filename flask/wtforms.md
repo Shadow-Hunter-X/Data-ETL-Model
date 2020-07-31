@@ -39,7 +39,7 @@ class MyForm(Form):
 明确是有两份数据：前端的表单数据 对应 后端Python数据对象；对前端数据的提取操作，并转换为后端的数据对象。
 
 
-### Filed
+### Filed-表单字段
 
 class wtforms.fields.Field
 
@@ -66,4 +66,103 @@ class MyForm(Form):
 |wtforms.fields.MultipleFileField|允许选择多个文件的文件字段|
 |wtforms.fields.FloatField|一个文本字段，除了所有输入都强制为浮点数。错误的输入会被忽略，不会被接受|
 |wtforms.fields.IntegerField|文本字段，除了所有输入都强制为整数。错误的输入会被忽略，不会被接受价值|
-|wtforms.fields.RadioField||
+|wtforms.fields.RadioField|表示\<input type = 'radio'\> HTML表单元素||
+|wtforms.fields.SelectField|Select字段保留一个选择属性，它是一个(值、标签)对序列|
+|wtforms.fields.SelectMultipleField|与普通的选择字段没有什么不同，只是这个字段可以接受(并验证)多个选择|
+|wtforms.fields.SubmitField|表示\<input type = 'submit'\>表单元素|
+|wtforms.fields.HiddenField|表示\<input type="hidden"\>|
+|wtforms.fields.PasswordField|表示\<input type="password"\>|
+|wtforms.fields.TextAreaField|这个字段表示一个HTML文本框。并可用于取多行输入|
+|wtforms.fields.Label|\<label\>|
+
+#### Field Enclosures
+
+    Field Enclosures允许您拥有表示字段集合的字段，以便表单可以由可以表示多个可重用组件或更复杂的数据结构，如列表和嵌套对象。
+使用 wtforms.fields.FormField ：将一个表单封装为另一个表单中的字段。
+~~~python
+class TelephoneForm(Form):
+    country_code = IntegerField('Country Code', [validators.required()])
+    area_code = IntegerField('Area Code/Exchange', [validators.required()])
+    number = StringField('Number')
+
+class ContactForm(Form):
+    first_name = StringField()
+    last_name = StringField()
+    mobile_phone = FormField(TelephoneForm)         # 使用FormFiled
+    office_phone = FormField(TelephoneForm)         # 使用FormFiled
+
+~~~
+
+#### FieldList
+
+    封装同一字段类型的多个实例的有序列表，将数据保持为列表。
+wtforms.fields.FieldList
+
+~~~python
+class IMForm(Form):
+    protocol = SelectField(choices=[('aim', 'AIM'), ('msn', 'MSN')])
+    username = StringField()
+
+class ContactForm(Form):
+    first_name = StringField()
+    last_name = StringField()
+    im_accounts = FieldList(FormField(IMForm)
+~~~
+
+### Validators--验证器
+
+验证器只接受输入，验证它是否满足某些条件，比如字符串的最大长度然后返回。如果验证失败，则引发ValidationError。
+这个系统非常简单和灵活，并允许在字段上连接任意数量的验证器。
+
+* class wtforms.validators.ValidationError(message=”, *args, **kwargs)
+
+    当验证器验证其输入失败时引发
+
+* class wtforms.validators.StopValidation(message=”, *args, **kwargs)
+
+    导致验证链停止
+
+#### 内建验证器
+
+|验证器|说明|
+|---------|--------|
+|wtforms.validators.DataRequired(message=None)|检查字段的数据是否为"真"，否则停止验证链|
+|wtforms.validators.Email(message=None)|验证电子邮件地址| 
+|wtforms.validators.EqualTo(fieldname, message=None)|比较两个字段的值|
+|wtforms.validators.InputRequired(message=None)|检查数据是否有提供。与DataRequired的不同：|
+|wtforms.validators.IPAddress(ipv4=True, ipv6=False, message=None)|检查是否为正确IP地址|
+|wtforms.validators.Length(min=-1, max=-1, message=None)|验证字符串的长度|
+|wtforms.validators.MacAddress(message=None)|验证Mac地址|
+|wtforms.validators.NumberRange(min=None, max=None, message=None)|验证是否在最大和最小值间|
+|wtforms.validators.Optional(strip_whitespace=True)|允许空输入并停止验证链继续|
+|wtforms.validators.Regexp(regex, flags=0, message=None)|根据用户提供的正则表达式验证字段|
+|wtforms.validators.URL(require_tld=True, message=None)|验证URL是否正确|
+|wtforms.validators.UUID(message=None)|验证一个UUID|
+|wtforms.validators.AnyOf(values, message=None, values_formatter=None)|将输入的数据与有效的输入序列进行比较。|
+|wtforms.validators.NoneOf(values, message=None, values_formatter=None)|将输入的数据与无效的输入序列进行比较|
+
+### Widgets
+
+小部件是用于将字段呈现为其可用表示的类，通常是XHTML。当一个字段调用时，默认行为是将呈现委托给它的小部件。提供这种抽象是为了让小部件能够
+很容易创建，以定制现有字段的呈现。
+
+注意，所有内置的小部件都会在呈现一个“html -安全”的unicode字符串子类时返回框架(Jinja2、Mako、Genshi)将被识别为不需要自动转义。
+
+#### 内置Widget
+
+* wtforms.widgets.ListWidget(html_tag=’ul’, prefix_label=True)
+
+将字段列表呈现为ul或ol列表。它用于将许多内部字段封装为子字段的字段。小部件将尝试迭代字段
+访问子字段并调用它们以呈现它们。如果设置了prefix_label，则子字段的标签将在字段之前打印，否则将在字段之后打印。后者是有用的迭代单选或复选框
+
+* wtforms.widgets.TableWidget(with_table_tag=True)
+
+将字段列表呈现为一组带有th/td对的表行。如果with_table_tag为真，则在行周围放置一个封闭的<table>。
+隐藏字段将不会与一行一起显示，相反，该字段将被推入后续的表行确保XHTML的有效性。字段列表末尾的隐藏字段将出现在表外部。
+
+* wtforms.widgets.Input(input_type=None)
+  
+渲染一个基本的输入字段。这被用作大多数其他输入字段的基础
+
+* wtforms.widgets.TextInput
+
