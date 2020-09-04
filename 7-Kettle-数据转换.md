@@ -22,4 +22,5 @@ title : 7-Kettle-数据转换
 * transform分组 --> Row Denormaliser -->  配置将行转为列 （多行变一行）
 ![]()
 
-## 
+## 时间维度 
+

@@ -4,12 +4,15 @@ from marshmallow_sqlalchemy  import ModelSchema
 from marshmallow import fields
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:iamneo@127.0.0.1:3306/test'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\test.db'    #windows上的书写格式
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:iamneo@127.0.0.1:3306/test'   #连接Mysql数据库
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///D:\\test.db'    	#windows上的书写格式
 
-db = SQLAlchemy(app)
+db = SQLAlchemy(app)      # 创建SQLAlchemy对象，但其封装的内容比原来的多：如session、model、engine等封装在一个对象中。
 
 class Authors(db.Model):
+"""
+	定义数据模型类型，对应的于数据库中的表。ORM：关系数据库的表结构映射到对象
+"""
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(20))
 	specialisation = db.Column(db.String(50))
@@ -22,12 +25,13 @@ class Authors(db.Model):
 	def __init__(self, name, specialisation):
 		self.name = name
 		self.specialisation = specialisation
+		
 	def __repr__(self):
 		return '<Product %d>' % self.id
 	
-db.create_all()
+db.create_all()     	# 创建表，如果存在则忽略，执行以上代码
 
-class AuthorsSchema(ModelSchema):
+class AuthorsSchema(ModelSchema):			   #使用marshmallow中的模型说明
 	class Meta(ModelSchema.Meta):
 		model = Authors
 		sqla_session = db.session
@@ -58,7 +62,6 @@ def update_author_by_id(id):
 		get_author.specialisation = data['specialisation']
 	if data.get('name'):
 		get_author.name = data['name']
-
 	db.session.add(get_author)
 	db.session.commit()
 	author_schema = AuthorsSchema(only=['id', 'name', 'specialisation'])
