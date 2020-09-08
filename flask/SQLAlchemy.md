@@ -96,7 +96,7 @@ session.commit()
 
 * 数据库-查操作
 
-通过session.query()我们查询返回了一个Query对象，此时还没有去具体的数据库中查询，只有当执行具体的.all()，.first()等函数时才会真的去操作数据库
+通过session.query()我们查询返回了一个Query对象，此时还没有去具体的数据库中查询，只有当执行具体的 .all()，.first()等函数时才会真的去操作数据库
 
 query有filter和filter_by两个过滤方法
 
