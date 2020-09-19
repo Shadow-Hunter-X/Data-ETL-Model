@@ -1,0 +1,6 @@
+{% extends "树.txt" %}
+{# 重写template块，从树.txt继承来的 #}
+{% block template %}四季.txt{% endblock template %}
+{% block begin %}
+	走过四季
+{%- endblock begin %}

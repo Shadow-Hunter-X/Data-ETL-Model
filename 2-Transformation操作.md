@@ -63,7 +63,7 @@ Input列和Output列,构成输入流和输出流。通过Input和Output是两个
 2020/06/10 16:51:18 - Data Grid.0 - ERROR (version 7.1.0.0-12, build 1 from 2017-05-16 17.18.02 by buildguy) : org.pentaho.di.core.exception.KettleValueException: 
 2020/06/10 16:51:18 - Data Grid.0 - work_in String : couldn't convert string [qazwsx] to a date using format [yyyy-MM-dd HH:mm:ss] on offset location 0
 2020/06/10 16:51:18 - Data Grid.0 - qazwsx
-....
+.......
 ~~~
 
 * 对Calculator中输入为在data grid中出现的列名，看执行过程是否发生何种错误。
@@ -90,8 +90,46 @@ Input列和Output列,构成输入流和输出流。通过Input和Output是两个
 
 通过上面的构造的3个错误，可以在Execution Results窗口中进行查看执行结果和相关信息。Execution Results窗口被分为6个标签，分别对应的功能如下。
 
+* Execution History : 记录了详细的历史执行情况。
+* logging           ：记录查看执行的日志，默认情况下日志详细信息的级别是基本日志，但可以选择日志级别。
+![logging level](res/set-logging-level.png)
+* Step Metrics      ：显示了transformaton的每个步骤所执行的操作数、状态、信息
+![step metrics](res/step-metrics.png)
+
+|标签列|说明|
+|------|--------|
+|Read|包含来自前面步骤的行数|
+|write|包含从这个步骤到下一个步骤剩下的行数|
+|Input|从文件或表中读取的行数|
+|Output|写入文件或表的行数|
+|Error|执行中出现的错误。如果有错误，整个行将变成红色|
+|Active|给出执行的当前状态|
+
+* performance Graph : 执行性能图,可为优化提供信息依据。
+* Metrics           : 执行步骤信息
+* Preview Data      : 预览数据
 
 ## Step的配置界面
 
-命令栏,和Setp的配置界面
-左侧的控件窗口的认识，认识更深层的Step
+* Step辅助窗口
+
+将鼠标在Step上悬停后，将出现辅助窗口，相关的说明如下图所示。
+![assistant](res/assistant-wnd.png)
+
+最边上的两个    ：用于连接两个Step间的Hop。
+从左到右的第二个：用于对Step进行编辑，对数据处理中的行为的配置。
+从左到有的第三个：Step的功能菜单，通过这里对Step各方面的修改和查看。
+
+* 执行调试工具栏
+
+通过执行调试工具栏,进行对Transformation进行调试，验证，预览等操作。
+
+![run-tool](res/run-tool.png)
+
+其中将预览也可以视为是调试的一种方式。
+
+* Design中的结构
+
+在Design窗口中，可以发现不同的功能的Step分组存放在不同的目录下。逐渐熟悉，灵活运用。
+
+![Design](res/design.png)

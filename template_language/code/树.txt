@@ -1,0 +1,7 @@
+{% extends "大地.txt" %}
+{# 重写template块，从大地.txt继承来的 #}
+{% block template %}树.txt{% endblock template %}
+{#- 重写begin块 #}
+{% block begin %}
+	树在大地上生长
+{%- endblock begin %}
